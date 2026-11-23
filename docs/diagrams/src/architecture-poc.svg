@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1080" width="1600" height="1080" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <title>Proof-of-concept architecture: Excel files in Amazon S3 opened as a network drive</title>
+  <style>
+    .title { font-size: 26px; font-weight: 700; fill: #232F3E; }
+    .sub { font-size: 15px; fill: #545B64; }
+    .group { font-size: 15px; font-weight: 700; fill: #232F3E; }
+    .name { font-size: 15px; font-weight: 700; fill: #232F3E; }
+    .detail { font-size: 13px; fill: #414D5C; }
+    .legend-title { font-size: 17px; font-weight: 700; fill: #232F3E; }
+    .legend { font-size: 14px; fill: #232F3E; }
+    .foot { font-size: 12px; fill: #545B64; }
+    .flow { stroke: #232F3E; stroke-width: 2; fill: none; }
+    .attach { stroke: #7D8998; stroke-width: 2; stroke-dasharray: 6 5; fill: none; }
+    .marker circle { fill: #232F3E; }
+    .marker text { font-size: 14px; font-weight: 700; fill: #FFFFFF; }
+  </style>
+  <defs>
+    <marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#232F3E"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="1080" fill="#FFFFFF"/>
+
+  <text class="title" x="40" y="52">Excel files in Amazon S3, opened as a network drive</text>
+  <text class="sub" x="40" y="82">This proof of concept runs in the sandbox01 AWS account in the us-east-1 Region. Terraform created every AWS part shown here.</text>
+
+  <!-- ===== User computers ===== -->
+  <rect id="box-users" x="40" y="120" width="320" height="400" rx="10" fill="#F7F8F8" stroke="#7D8998" stroke-width="1.5"/>
+  <g data-in="box-users">
+    <text class="group" x="60" y="150">User computers</text>
+    <image href="icons/client.svg" x="168" y="176" width="64" height="64"/>
+    <text class="name" x="200" y="266" text-anchor="middle">Windows 11 laptop</text>
+    <text class="detail" x="200" y="286" text-anchor="middle">Runs Excel with VBA macros.</text>
+    <text class="detail" x="200" y="304" text-anchor="middle">Runs the AWS VPN Client app.</text>
+    <image href="icons/client.svg" x="168" y="340" width="64" height="64"/>
+    <text class="name" x="200" y="430" text-anchor="middle">Mac</text>
+    <text class="detail" x="200" y="450" text-anchor="middle">Runs Excel or the Mac Numbers app.</text>
+    <text class="detail" x="200" y="468" text-anchor="middle">Runs the AWS VPN Client app.</text>
+  </g>
+
+  <!-- ===== Local network ===== -->
+  <rect id="box-network" x="40" y="550" width="320" height="200" rx="10" fill="#FFF7F0" stroke="#ED7100" stroke-width="1.5"/>
+  <g data-in="box-network">
+    <text class="group" x="60" y="580">Home or office network</text>
+    <image href="icons/firewall.svg" x="60" y="600" width="48" height="48"/>
+    <text class="detail" x="122" y="614">The router drops traffic on</text>
+    <text class="detail" x="122" y="632">port 445, which Windows</text>
+    <text class="detail" x="122" y="650">file sharing uses.</text>
+    <text class="detail" x="60" y="690">The router allows port 443, so the</text>
+    <text class="detail" x="60" y="708">VPN tunnel uses that port instead.</text>
+  </g>
+
+  <!-- ===== AWS Cloud ===== -->
+  <rect id="box-cloud" x="400" y="120" width="1160" height="720" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+  <image href="icons/group-aws-cloud.svg" x="400" y="120" width="40" height="40"/>
+  <g data-in="box-cloud"><text class="group" x="450" y="146">AWS Cloud</text></g>
+
+  <rect id="box-region" x="420" y="170" width="1120" height="650" fill="none" stroke="#00A4A6" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <image href="icons/group-region.svg" x="420" y="170" width="40" height="40"/>
+  <g data-in="box-region"><text class="group" x="470" y="196">US East (N. Virginia) Region, us-east-1</text></g>
+
+  <rect id="box-vpc" x="440" y="220" width="640" height="540" fill="none" stroke="#8C4FFF" stroke-width="1.5"/>
+  <image href="icons/group-vpc.svg" x="440" y="220" width="40" height="40"/>
+  <g data-in="box-vpc"><text class="group" x="490" y="246">VPC 10.40.0.0/16</text></g>
+
+  <rect id="box-subnet" x="460" y="266" width="600" height="474" fill="#F2F6E8" stroke="#7AA116" stroke-width="1.5"/>
+  <image href="icons/group-public-subnet.svg" x="460" y="266" width="40" height="40"/>
+  <g data-in="box-subnet"><text class="group" x="510" y="292">Public subnet 10.40.0.0/24</text></g>
+
+  <!-- Flow lines are drawn before the icons so the icons sit on top. -->
+  <line class="flow" x1="360" y1="280" x2="524" y2="370" marker-end="url(#head)"/>
+  <line class="flow" x1="594" y1="372" x2="756" y2="372" marker-start="url(#head)" marker-end="url(#head)"/>
+  <line class="flow" x1="792" y1="406" x2="792" y2="556" marker-start="url(#head)" marker-end="url(#head)"/>
+  <polyline class="flow" points="792,338 792,318 1048,318" marker-start="url(#head)" marker-end="url(#head)"/>
+  <line class="flow" x1="1110" y1="318" x2="1284" y2="318" marker-start="url(#head)" marker-end="url(#head)"/>
+  <line class="attach" x1="594" y1="574" x2="764" y2="404"/>
+
+  <g data-in="box-subnet">
+    <!-- Client VPN endpoint -->
+    <image href="icons/client-vpn.svg" x="528" y="340" width="64" height="64"/>
+    <text class="name" x="560" y="430" text-anchor="middle">AWS Client VPN</text>
+    <text class="name" x="560" y="448" text-anchor="middle">endpoint</text>
+    <text class="detail" x="560" y="468" text-anchor="middle">Listens on TCP port 443.</text>
+    <text class="detail" x="560" y="486" text-anchor="middle">Users sign in with a</text>
+    <text class="detail" x="560" y="504" text-anchor="middle">certificate.</text>
+
+    <!-- Gateway -->
+    <image href="icons/s3-file-gateway.svg" x="760" y="340" width="64" height="64"/>
+    <text class="name" x="840" y="362">S3 File Gateway</text>
+    <text class="detail" x="840" y="382">Runs on an m5.xlarge</text>
+    <text class="detail" x="840" y="400">EC2 instance.</text>
+    <text class="detail" x="840" y="418">Private IP 10.40.0.217</text>
+
+    <!-- Cache disk -->
+    <image href="icons/ebs-gp3.svg" x="760" y="560" width="64" height="64"/>
+    <text class="name" x="840" y="582">Cache disk</text>
+    <text class="detail" x="840" y="602">300 GiB gp3 EBS volume.</text>
+    <text class="detail" x="840" y="620">EBS encryption is on.</text>
+
+    <!-- Elastic IP -->
+    <image href="icons/elastic-ip.svg" x="528" y="560" width="64" height="64"/>
+    <text class="name" x="560" y="650" text-anchor="middle">Elastic IP address</text>
+    <text class="detail" x="560" y="670" text-anchor="middle">Public address of the</text>
+    <text class="detail" x="560" y="688" text-anchor="middle">gateway. Terraform used</text>
+    <text class="detail" x="560" y="706" text-anchor="middle">it once for activation.</text>
+  </g>
+
+  <!-- Internet gateway on the VPC border -->
+  <image href="icons/internet-gateway.svg" x="1052" y="290" width="56" height="56"/>
+  <g data-in="box-region">
+    <text class="name" x="1118" y="364">Internet</text>
+    <text class="name" x="1118" y="382">gateway</text>
+  </g>
+
+  <!-- Regional services -->
+  <g data-in="box-region">
+    <image href="icons/s3-bucket.svg" x="1288" y="286" width="64" height="64"/>
+    <text class="name" x="1320" y="376" text-anchor="middle">Amazon S3 bucket</text>
+    <text class="detail" x="1320" y="396" text-anchor="middle">Holds the Excel files.</text>
+    <text class="detail" x="1320" y="414" text-anchor="middle">Versioning keeps each old</text>
+    <text class="detail" x="1320" y="432" text-anchor="middle">copy for 30 days.</text>
+
+    <image href="icons/iam-role.svg" x="1288" y="490" width="64" height="64"/>
+    <text class="name" x="1320" y="580" text-anchor="middle">IAM role for the gateway</text>
+    <text class="detail" x="1320" y="600" text-anchor="middle">Allows reading and writing</text>
+    <text class="detail" x="1320" y="618" text-anchor="middle">in this bucket only.</text>
+
+    <image href="icons/acm.svg" x="1288" y="670" width="64" height="64"/>
+    <text class="name" x="1320" y="760" text-anchor="middle">AWS Certificate Manager</text>
+    <text class="detail" x="1320" y="780" text-anchor="middle">Stores the certificate that</text>
+    <text class="detail" x="1320" y="798" text-anchor="middle">the VPN endpoint presents.</text>
+  </g>
+
+  <!-- Numbered step markers -->
+  <g class="marker"><circle cx="380" cy="291" r="13"/><text x="380" y="296" text-anchor="middle">1</text></g>
+  <g class="marker"><circle cx="675" cy="372" r="13"/><text x="675" y="377" text-anchor="middle">2</text></g>
+  <g class="marker"><circle cx="792" cy="482" r="13"/><text x="792" y="487" text-anchor="middle">3</text></g>
+  <g class="marker"><circle cx="1196" cy="318" r="13"/><text x="1196" y="323" text-anchor="middle">4</text></g>
+
+  <!-- ===== Legend ===== -->
+  <g transform="translate(0,-40)">
+  <rect id="box-legend" x="40" y="900" width="1520" height="200" rx="10" fill="#F7F8F8" stroke="#D5DBDB" stroke-width="1.5"/>
+  <g data-in="box-legend">
+    <text class="legend-title" x="64" y="932">How a file is opened and saved</text>
+
+    <g class="marker"><circle cx="78" cy="963" r="12"/><text x="78" y="968" text-anchor="middle">1</text></g>
+    <text class="legend" x="102" y="968">The user connects the AWS VPN Client. The tunnel runs over TCP port 443,</text>
+    <text class="legend" x="102" y="988">so it passes through networks that block port 445.</text>
+
+    <g class="marker"><circle cx="78" cy="1019" r="12"/><text x="78" y="1024" text-anchor="middle">2</text></g>
+    <text class="legend" x="102" y="1024">Excel opens and saves files on the share through the tunnel. Every SMB</text>
+    <text class="legend" x="102" y="1044">connection is encrypted, and the share asks for the guest password.</text>
+
+    <g class="marker"><circle cx="830" cy="963" r="12"/><text x="830" y="968" text-anchor="middle">3</text></g>
+    <text class="legend" x="854" y="968">The gateway serves files from its cache disk at disk speed. A save is written</text>
+    <text class="legend" x="854" y="988">to the cache first, so Excel does not wait for Amazon S3.</text>
+
+    <g class="marker"><circle cx="830" cy="1019" r="12"/><text x="830" y="1024" text-anchor="middle">4</text></g>
+    <text class="legend" x="854" y="1024">The gateway uploads each saved file to the bucket over HTTPS with its IAM role.</text>
+    <text class="legend" x="854" y="1044">Files added straight to the bucket appear on the share within 5 minutes.</text>
+
+    <text class="foot" x="64" y="1084">The dashed line shows that the Elastic IP address is attached to the gateway. Icons come from the AWS Architecture Icons package released on 31 July 2026.</text>
+  </g>
+  </g>
+</svg>

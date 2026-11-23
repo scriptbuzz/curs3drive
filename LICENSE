@@ -1,0 +1,91 @@
+PROPRIETARY SOFTWARE LICENSE
+
+DRAFT - For internal use only. Proprietary and confidential.
+
+This repository and everything in it, including source code, Terraform
+configuration, scripts, tools, tests, documentation, diagrams, recordings and
+any other material (together, the "Material"), is the confidential and
+proprietary property of FPT (the "Owner"), which owns this solution.
+
+1. NO LICENSE GRANTED
+
+   The Material is not open source. No license, right or permission of any
+   kind is granted by this file, by access to the Material, or by implication,
+   estoppel or otherwise, except as the Owner expressly grants in a separate
+   written agreement signed by the Owner.
+
+2. RESTRICTIONS
+
+   Without the Owner's prior written permission, no person may:
+
+   a. use, run, deploy or execute the Material, in whole or in part;
+   b. copy, reproduce, mirror or store the Material, except as needed to view
+      it on a system the Owner has authorized;
+   c. modify, adapt, translate or create derivative works of the Material;
+   d. distribute, publish, sublicense, sell, rent, lease, lend, transfer or
+      otherwise make the Material available to any third party;
+   e. use the Material, or any part of it, to train, fine-tune or evaluate any
+      machine learning model or automated system;
+   f. remove, alter or obscure any confidentiality or proprietary notice in
+      the Material.
+
+3. CONFIDENTIALITY
+
+   The Material contains confidential information. Anyone who receives access
+   to it must keep it confidential, must use it only for the purpose the Owner
+   authorized, and must return or destroy every copy when the Owner asks or
+   when that purpose ends.
+
+4. THIRD-PARTY MATERIAL
+
+   Some files in the Material are owned by third parties and are used under
+   their own terms, as listed in NOTICE.md. This license does not grant any
+   right in third-party material, and nothing here changes the third party's
+   terms.
+
+5. NO WARRANTY
+
+   THE MATERIAL IS PROVIDED "AS IS" AND "AS AVAILABLE", WITH ALL FAULTS AND
+   WITHOUT WARRANTY OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY OR
+   OTHERWISE, INCLUDING ANY WARRANTY OF MERCHANTABILITY, FITNESS FOR A
+   PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT, ACCURACY, SECURITY, OR THAT THE
+   MATERIAL WILL BE ERROR-FREE OR UNINTERRUPTED. THE OWNER DOES NOT WARRANT
+   THAT ANY COST ESTIMATE, TEST RESULT, MEASUREMENT OR STATEMENT IN THE
+   MATERIAL IS CORRECT, COMPLETE OR CURRENT.
+
+6. LIMITATION OF LIABILITY
+
+   TO THE FULLEST EXTENT PERMITTED BY LAW, THE OWNER SHALL NOT BE LIABLE FOR
+   ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, PUNITIVE OR
+   CONSEQUENTIAL DAMAGES, OR FOR ANY LOSS OF DATA, PROFITS, REVENUE, BUSINESS
+   OR GOODWILL, OR FOR ANY CLOUD SERVICE CHARGES, SECURITY INCIDENT OR SERVICE
+   INTERRUPTION, ARISING OUT OF OR RELATED TO THE MATERIAL OR ITS USE, EVEN IF
+   ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, AND WHETHER IN CONTRACT, TORT
+   (INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE.
+
+7. RESPONSIBILITY FOR USE
+
+   Anyone the Owner permits to use the Material does so at their own risk and
+   is solely responsible for every resource it creates, every charge it
+   causes, the security of every system it touches, and compliance with every
+   law, regulation, contract and policy that applies to them, including the
+   terms of Amazon Web Services and Microsoft.
+
+8. TERMINATION
+
+   Any permission the Owner grants ends automatically, without notice, if its
+   terms or this license are breached. On termination, all use must stop and
+   every copy of the Material must be destroyed.
+
+9. DISCLAIMERS
+
+   The disclaimers in DISCLAIMER.md form part of this license.
+
+10. GOVERNING TERMS
+
+   If any part of this license is found unenforceable, the rest stays in
+   effect. Failure to enforce any part is not a waiver. Every right not
+   expressly granted is reserved by the Owner.
+
+For permission requests, contact the Owner through the repository's hosting
+account.

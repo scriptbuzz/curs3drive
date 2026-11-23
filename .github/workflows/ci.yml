@@ -1,0 +1,66 @@
+# DRAFT - For internal use only. Proprietary and confidential. FPT owns this solution. See LICENSE.
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: Terraform format, validation and tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.15.7
+
+      - name: Check formatting
+        run: terraform fmt -check -recursive
+
+      - name: Download providers
+        run: terraform init -backend=false -input=false
+
+      - name: Validate the configuration
+        run: terraform validate
+
+      - name: Run the security tests with mock providers
+        run: terraform test
+
+  security-scan:
+    name: Checkov security scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Checkov
+        run: pip install "checkov==3.2.*"
+
+      # Findings that the proof of concept accepts on purpose are listed in docs/security.md.
+      - name: Scan the Terraform code
+        run: checkov --directory terraform --framework terraform --compact --quiet --soft-fail
+
+  python:
+    name: Python tool tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run the unit tests
+        run: python -m unittest discover -s tests -v

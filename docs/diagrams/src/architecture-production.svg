@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1340" width="1600" height="1340" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <title>Recommended production architecture: a private file share tied to Microsoft Entra ID</title>
+  <style>
+    .title { font-size: 26px; font-weight: 700; fill: #232F3E; }
+    .sub { font-size: 15px; fill: #545B64; }
+    .group { font-size: 15px; font-weight: 700; fill: #232F3E; }
+    .name { font-size: 15px; font-weight: 700; fill: #232F3E; }
+    .detail { font-size: 13px; fill: #414D5C; }
+    .legend-title { font-size: 17px; font-weight: 700; fill: #232F3E; }
+    .legend { font-size: 14px; fill: #232F3E; }
+    .foot { font-size: 12px; fill: #545B64; }
+    .flow { stroke: #232F3E; stroke-width: 2; fill: none; }
+    .marker circle { fill: #232F3E; }
+    .marker text { font-size: 14px; font-weight: 700; fill: #FFFFFF; }
+  </style>
+  <defs>
+    <marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#232F3E"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="1340" fill="#FFFFFF"/>
+
+  <text class="title" x="40" y="52">Recommended production design: a private file share tied to Microsoft Entra ID</text>
+  <text class="sub" x="40" y="82">This design is a recommendation and is not deployed yet. It removes the shared password and every public address from the proof of concept.</text>
+
+  <!-- ===== Office ===== -->
+  <rect id="box-office" x="40" y="270" width="340" height="180" rx="10" fill="#F7F8F8" stroke="#7D8998" stroke-width="1.5"/>
+  <g data-in="box-office">
+    <text class="group" x="60" y="300">Office</text>
+    <image href="icons/users.svg" x="60" y="322" width="56" height="56"/>
+    <text class="name" x="132" y="340">Windows 11 laptops</text>
+    <text class="detail" x="132" y="360">Run Excel with VBA macros.</text>
+    <text class="detail" x="132" y="378">Drive S: maps the share.</text>
+    <text class="detail" x="132" y="396">Users sign in with their</text>
+    <text class="detail" x="132" y="414">own domain accounts.</text>
+  </g>
+
+  <!-- ===== Remote users ===== -->
+  <rect id="box-remote" x="40" y="490" width="340" height="180" rx="10" fill="#F7F8F8" stroke="#7D8998" stroke-width="1.5"/>
+  <g data-in="box-remote">
+    <text class="group" x="60" y="520">Remote users</text>
+    <image href="icons/client.svg" x="60" y="542" width="56" height="56"/>
+    <text class="name" x="132" y="560">Laptops at home</text>
+    <text class="detail" x="132" y="580">Run the AWS VPN Client app.</text>
+    <text class="detail" x="132" y="598">Users sign in with</text>
+    <text class="detail" x="132" y="616">Microsoft Entra ID.</text>
+  </g>
+
+  <!-- ===== Microsoft Azure ===== -->
+  <rect id="box-azure" x="40" y="710" width="340" height="270" rx="10" fill="#F2F7FD" stroke="#0078D4" stroke-width="1.5"/>
+  <g data-in="box-azure"><text class="group" x="60" y="740">Microsoft Azure</text></g>
+  <rect id="box-entra" x="60" y="756" width="300" height="88" rx="6" fill="#FFFFFF" stroke="#0078D4"/>
+  <g data-in="box-entra">
+    <text class="name" x="76" y="782">Microsoft Entra ID</text>
+    <text class="detail" x="76" y="802">Holds user accounts and groups.</text>
+    <text class="detail" x="76" y="820">Signs VPN users in with SAML.</text>
+  </g>
+  <rect id="box-ds" x="60" y="860" width="300" height="100" rx="6" fill="#FFFFFF" stroke="#0078D4"/>
+  <g data-in="box-ds">
+    <text class="name" x="76" y="886">Microsoft Entra Domain Services</text>
+    <text class="detail" x="76" y="906">Runs a managed Active Directory</text>
+    <text class="detail" x="76" y="924">domain that stays in sync with</text>
+    <text class="detail" x="76" y="942">Entra ID. The gateway joins it.</text>
+  </g>
+
+  <!-- ===== Private connections ===== -->
+  <image href="icons/site-to-site-vpn.svg" x="420" y="334" width="56" height="56"/>
+  <text class="detail" x="448" y="414" text-anchor="middle">Site-to-Site VPN</text>
+  <text class="detail" x="448" y="432" text-anchor="middle">or Direct Connect</text>
+
+  <image href="icons/site-to-site-vpn.svg" x="420" y="880" width="56" height="56"/>
+  <text class="detail" x="448" y="956" text-anchor="middle">Site-to-Site VPN</text>
+  <text class="detail" x="448" y="974" text-anchor="middle">to Azure</text>
+
+  <!-- ===== AWS Cloud ===== -->
+  <rect id="box-cloud" x="520" y="120" width="1040" height="880" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+  <image href="icons/group-aws-cloud.svg" x="520" y="120" width="40" height="40"/>
+  <g data-in="box-cloud"><text class="group" x="570" y="146">AWS Cloud</text></g>
+
+  <rect id="box-region" x="540" y="170" width="1000" height="810" fill="none" stroke="#00A4A6" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <image href="icons/group-region.svg" x="540" y="170" width="40" height="40"/>
+  <g data-in="box-region"><text class="group" x="590" y="196">AWS Region closest to the users</text></g>
+
+  <rect id="box-vpc" x="560" y="220" width="660" height="740" fill="none" stroke="#8C4FFF" stroke-width="1.5"/>
+  <image href="icons/group-vpc.svg" x="560" y="220" width="40" height="40"/>
+  <g data-in="box-vpc"><text class="group" x="610" y="246">VPC with no internet gateway</text></g>
+
+  <rect id="box-subnet" x="580" y="266" width="620" height="674" fill="#E6F6F7" stroke="#00A4A6" stroke-width="1.5"/>
+  <image href="icons/group-private-subnet.svg" x="580" y="266" width="40" height="40"/>
+  <g data-in="box-subnet"><text class="group" x="630" y="292">Private subnet</text></g>
+
+  <!-- Flow lines -->
+  <line class="flow" x1="380" y1="362" x2="416" y2="362" marker-end="url(#head)"/>
+  <line class="flow" x1="480" y1="362" x2="756" y2="362" marker-end="url(#head)"/>
+  <line class="flow" x1="380" y1="592" x2="636" y2="592" marker-end="url(#head)"/>
+  <line class="flow" x1="700" y1="558" x2="764" y2="400" marker-end="url(#head)"/>
+  <line class="flow" x1="792" y1="398" x2="792" y2="556" marker-start="url(#head)" marker-end="url(#head)"/>
+  <polyline class="flow" points="792,326 792,318 1076,318" marker-start="url(#head)" marker-end="url(#head)"/>
+  <line class="flow" x1="1148" y1="318" x2="1286" y2="318" marker-start="url(#head)" marker-end="url(#head)"/>
+  <line class="flow" x1="1322" y1="476" x2="1322" y2="354" marker-end="url(#head)"/>
+  <line class="flow" x1="360" y1="908" x2="416" y2="908" marker-start="url(#head)" marker-end="url(#head)"/>
+  <line class="flow" x1="480" y1="908" x2="556" y2="908" marker-start="url(#head)" marker-end="url(#head)"/>
+
+  <g data-in="box-subnet">
+    <image href="icons/s3-file-gateway.svg" x="760" y="330" width="64" height="64"/>
+    <text class="name" x="840" y="362">S3 File Gateway</text>
+    <text class="detail" x="840" y="382">Runs on an m5.2xlarge</text>
+    <text class="detail" x="840" y="400">EC2 instance or larger.</text>
+    <text class="detail" x="840" y="418">Joined to the domain.</text>
+
+    <image href="icons/ebs-gp3.svg" x="760" y="560" width="64" height="64"/>
+    <text class="name" x="840" y="582">Cache disk</text>
+    <text class="detail" x="840" y="602">1 TiB or more of gp3.</text>
+    <text class="detail" x="840" y="620">Sized to hold a month</text>
+    <text class="detail" x="840" y="638">of working files.</text>
+
+    <image href="icons/client-vpn.svg" x="640" y="560" width="64" height="64"/>
+    <text class="name" x="672" y="650" text-anchor="middle">AWS Client VPN</text>
+    <text class="name" x="672" y="668" text-anchor="middle">endpoint</text>
+    <text class="detail" x="672" y="688" text-anchor="middle">Users sign in with</text>
+    <text class="detail" x="672" y="706" text-anchor="middle">Microsoft Entra ID.</text>
+
+    <image href="icons/vpc-endpoint.svg" x="1080" y="286" width="64" height="64"/>
+    <text class="name" x="1112" y="376" text-anchor="middle">VPC endpoints</text>
+    <text class="detail" x="1112" y="396" text-anchor="middle">Keep traffic to S3 and</text>
+    <text class="detail" x="1112" y="414" text-anchor="middle">Storage Gateway off</text>
+    <text class="detail" x="1112" y="432" text-anchor="middle">the internet.</text>
+  </g>
+
+  <g data-in="box-region">
+    <image href="icons/s3-bucket.svg" x="1290" y="286" width="64" height="64"/>
+    <text class="name" x="1366" y="306">Amazon S3 bucket</text>
+    <text class="detail" x="1366" y="326">Encrypted with a</text>
+    <text class="detail" x="1366" y="344">customer KMS key.</text>
+    <text class="detail" x="1366" y="362">Keeps old versions.</text>
+
+    <image href="icons/cur.svg" x="1290" y="480" width="64" height="64"/>
+    <text class="name" x="1366" y="500">Cost and Usage</text>
+    <text class="name" x="1366" y="518">Report export</text>
+    <text class="detail" x="1366" y="538">Data Exports writes</text>
+    <text class="detail" x="1366" y="556">new CUR files daily.</text>
+
+    <image href="icons/cloudwatch.svg" x="1290" y="660" width="64" height="64"/>
+    <text class="name" x="1366" y="680">Amazon</text>
+    <text class="name" x="1366" y="698">CloudWatch</text>
+    <text class="detail" x="1366" y="718">Health logs and</text>
+    <text class="detail" x="1366" y="736">alarms for the gateway.</text>
+  </g>
+
+  <!-- Numbered step markers -->
+  <g class="marker"><circle cx="620" cy="362" r="13"/><text x="620" y="367" text-anchor="middle">1</text></g>
+  <g class="marker"><circle cx="500" cy="592" r="13"/><text x="500" y="597" text-anchor="middle">2</text></g>
+  <g class="marker"><circle cx="792" cy="476" r="13"/><text x="792" y="481" text-anchor="middle">3</text></g>
+  <g class="marker"><circle cx="950" cy="318" r="13"/><text x="950" y="323" text-anchor="middle">4</text></g>
+  <g class="marker"><circle cx="1250" cy="318" r="13"/><text x="1250" y="323" text-anchor="middle">5</text></g>
+  <g class="marker"><circle cx="1322" cy="415" r="13"/><text x="1322" y="420" text-anchor="middle">6</text></g>
+  <g class="marker"><circle cx="448" cy="862" r="13"/><text x="448" y="867" text-anchor="middle">7</text></g>
+
+  <!-- ===== Legend ===== -->
+  <rect id="box-legend" x="40" y="1020" width="1520" height="300" rx="10" fill="#F7F8F8" stroke="#D5DBDB" stroke-width="1.5"/>
+  <g data-in="box-legend">
+    <text class="legend-title" x="64" y="1052">How the production design works</text>
+
+    <g class="marker"><circle cx="78" cy="1083" r="12"/><text x="78" y="1088" text-anchor="middle">1</text></g>
+    <text class="legend" x="102" y="1088">Office laptops reach the gateway over AWS Site-to-Site VPN or AWS Direct</text>
+    <text class="legend" x="102" y="1108">Connect. Users sign in to the share with their own domain accounts.</text>
+
+    <g class="marker"><circle cx="78" cy="1139" r="12"/><text x="78" y="1144" text-anchor="middle">2</text></g>
+    <text class="legend" x="102" y="1144">Remote users connect the AWS VPN Client and sign in with Microsoft Entra ID.</text>
+    <text class="legend" x="102" y="1164">The file-sharing port is never reachable from the internet.</text>
+
+    <g class="marker"><circle cx="78" cy="1195" r="12"/><text x="78" y="1200" text-anchor="middle">3</text></g>
+    <text class="legend" x="102" y="1200">The gateway serves files from a cache disk sized for a month of work, so</text>
+    <text class="legend" x="102" y="1220">most file opens never wait for Amazon S3.</text>
+
+    <g class="marker"><circle cx="78" cy="1251" r="12"/><text x="78" y="1256" text-anchor="middle">4</text></g>
+    <text class="legend" x="102" y="1256">The gateway reaches AWS services through VPC endpoints, so the subnet</text>
+    <text class="legend" x="102" y="1276">needs no internet gateway and no public IP address.</text>
+
+    <g class="marker"><circle cx="830" cy="1083" r="12"/><text x="830" y="1088" text-anchor="middle">5</text></g>
+    <text class="legend" x="854" y="1088">Saved files are uploaded to the bucket, which is encrypted with a customer</text>
+    <text class="legend" x="854" y="1108">managed AWS KMS key and keeps old versions.</text>
+
+    <g class="marker"><circle cx="830" cy="1139" r="12"/><text x="830" y="1144" text-anchor="middle">6</text></g>
+    <text class="legend" x="854" y="1144">AWS Data Exports writes new CUR files into the bucket every day, and they</text>
+    <text class="legend" x="854" y="1164">appear on the share within 5 minutes.</text>
+
+    <g class="marker"><circle cx="830" cy="1195" r="12"/><text x="830" y="1200" text-anchor="middle">7</text></g>
+    <text class="legend" x="854" y="1200">The gateway joins the Microsoft Entra Domain Services domain over a</text>
+    <text class="legend" x="854" y="1220">site-to-site VPN to Azure, so folder permissions use Entra groups.</text>
+
+    <text class="foot" x="64" y="1306">Amazon CloudWatch collects the gateway's health logs and raises alarms. Icons come from the AWS Architecture Icons package released on 31 July 2026.</text>
+  </g>
+</svg>

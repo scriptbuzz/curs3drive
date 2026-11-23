@@ -1,0 +1,132 @@
+# ------------------------------------------------------------
+# Terraform
+# ------------------------------------------------------------
+# Downloaded providers and modules.
+.terraform/
+# State files hold resource details and secrets, such as the guest password and VPN keys.
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+# Saved plans can contain secrets in plain text.
+*.tfplan
+*.plan
+# Variable files hold account-specific values. The .example file is kept.
+terraform.tfvars
+*.auto.tfvars
+*.tfvars.json
+!terraform.tfvars.example
+# Local overrides that are not meant to be shared.
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+# Terraform CLI settings and crash reports.
+.terraformrc
+terraform.rc
+crash.log
+crash.*.log
+# The provider lock file .terraform.lock.hcl is kept on purpose, so everyone uses the same provider versions.
+
+# ------------------------------------------------------------
+# AWS
+# ------------------------------------------------------------
+# Credentials and CLI settings, in case a copy ends up in the project.
+.aws/
+credentials
+aws-exports.js
+# Client VPN profiles contain the private key that signs users in.
+*.ovpn
+# Certificates and private keys.
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.csr
+# Build output from the AWS SAM CLI, AWS CDK and the Serverless Framework.
+.aws-sam/
+samconfig.toml.bak
+cdk.out/
+.cdk.staging/
+.serverless/
+# Files downloaded from S3 for local testing.
+downloads/
+*.cur.csv
+*.cur.csv.gz
+*.snappy.parquet
+
+# ------------------------------------------------------------
+# Secrets and environment files
+# ------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.secret
+secrets.*
+
+# ------------------------------------------------------------
+# Office files
+# ------------------------------------------------------------
+# Lock files Excel and Word create while a document is open.
+~$*
+# Workbooks with real cost data stay in S3, not in version control.
+*.xlsx
+*.xlsm
+*.xlsb
+*.xls
+*.numbers
+
+# ------------------------------------------------------------
+# Logs and temporary files
+# ------------------------------------------------------------
+*.log
+# The demo recording is kept, because tools/build_demo.py rebuilds the demo pages from it.
+!docs/demo/recording.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# ------------------------------------------------------------
+# Python
+# ------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ------------------------------------------------------------
+# Node.js
+# ------------------------------------------------------------
+node_modules/
+npm-debug.log*
+
+# ------------------------------------------------------------
+# macOS
+# ------------------------------------------------------------
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# ------------------------------------------------------------
+# Windows
+# ------------------------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ------------------------------------------------------------
+# Editors
+# ------------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.iml
+*.sublime-workspace

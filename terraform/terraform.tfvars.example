@@ -1,0 +1,20 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is listed in .gitignore, so it is never committed.
+
+region      = "us-east-1"
+aws_profile = "curwork-ic-admin"
+
+# Globally unique bucket name for the Excel files.
+bucket_name = "example-cur-excel-files"
+
+# Public IP of each Mac or Windows PC that may open the share. Find yours at https://checkip.amazonaws.com.
+allowed_client_cidrs = ["203.0.113.10/32"]
+
+# Public IP of the machine running Terraform, needed once for activation. Set to [] after the first apply.
+activation_cidrs = ["203.0.113.10/32"]
+
+# Terraform generates the guest password. Show it after the apply with:
+#   terraform output -raw smb_guest_password
+# To choose your own instead, set it in the shell rather than in this file:
+#   macOS:      export TF_VAR_smb_guest_password='...'
+#   Windows:    $env:TF_VAR_smb_guest_password = '...'
