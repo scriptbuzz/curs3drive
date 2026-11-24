@@ -1,6 +1,6 @@
 # Changelog
 
-_DRAFT - For internal use only. Last modified: 2026-11-24 07:58 EST by mbitar._
+_DRAFT - For internal use only. Last modified: 2026-11-24 08:02 EST by mbitar._
 
 This file lists the notable changes to the repository, newest first.
 
@@ -9,6 +9,12 @@ This file lists the notable changes to the repository, newest first.
 ### Added
 
 - A README section that compares the proof of concept with the production design, with the production diagram.
+- Status, remote access, outbound traffic, instance metadata and cost in the comparison on the production design page.
+
+### Fixed
+
+- The production design page no longer says that the test plan has already run.
+- The outbound rule recommended for production now includes the traffic that a domain-joined gateway needs.
 
 ## 2026-11-23
 

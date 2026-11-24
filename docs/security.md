@@ -1,6 +1,6 @@
 # Security
 
-_DRAFT - For internal use only. Last modified: 2026-11-23 11:37 EST by mbitar._
+_DRAFT - For internal use only. Last modified: 2026-11-24 08:02 EST by mbitar._
 
 This page lists the protections the proof of concept has, the weaknesses it accepts on purpose, and what production must change. CUR files show what an organization spends on AWS and on which accounts, so treat them as confidential business data.
 
@@ -37,7 +37,7 @@ These are acceptable for a short test with non-sensitive files. Each one must be
 | VPN connection logs, VPC flow logs, S3 server access logs and CloudTrail data events are off. | There is no record of who connected or which files were read. | Turn on Client VPN connection logs, VPC flow logs, and CloudTrail data events for the bucket. |
 | S3 and EBS use AWS-managed keys. | Access to the data cannot be removed by disabling a key. | Use a customer managed AWS KMS key for the bucket and the disks. |
 | The instance metadata service accepts version 1 requests. | Version 1 is easier to abuse if software on the instance is compromised. The gateway runs only AWS's own software, which lowers the risk. | Test the gateway with `http_tokens = "required"`, and require version 2 if the gateway still works. |
-| The gateway's outbound security group rule allows all traffic. | A compromised gateway could connect anywhere. | Allow only HTTPS to the VPC endpoints. |
+| The gateway's outbound security group rule allows all traffic. | A compromised gateway could connect anywhere. | Allow only HTTPS to the VPC endpoints, and the DNS, sign-in and time traffic that a domain-joined gateway exchanges with its domain controllers. |
 
 ## Where each secret lives
 
