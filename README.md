@@ -2,7 +2,7 @@
 
 # CUR Excel Files on an S3 Network Drive with Amazon S3 File Gateway
 
-_DRAFT - For internal use only. Last modified: 2026-11-23 11:44 EST by mbitar._
+_DRAFT - For internal use only. Last modified: 2026-11-24 07:58 EST by mbitar._
 
 **Excel users on Windows 11 and macOS open, edit and save Cost and Usage Report workbooks that are stored in Amazon S3, through an ordinary network drive. The AWS service that turns the S3 bucket into that network drive is Amazon S3 File Gateway, one type of AWS Storage Gateway.**
 
@@ -47,6 +47,28 @@ The [architecture page](docs/architecture.md) explains how a file is opened and 
 | How fast is it? | The [114 MB workbook](docs/test-results.md#large-workbook-test-the-114-mb-file) copied from the share in 21 seconds over a 65 Mbit/s home connection. Files in the gateway's cache open at disk speed. |
 | What does it cost? | About $277 a month for the proof of concept, and about $615 to $655 for the production design. See [Costs](docs/costs.md). |
 | Is it deployed? | No. It ran in the sandbox01 account in us-east-1 and was removed on 23 November 2026. The quick start below deploys it again. |
+
+## Proof of concept and production
+
+The proof of concept shows that the idea works, and it accepts weaknesses that real cost data must not be exposed to. The production design removes those weaknesses. It is a recommendation, and it has not been built or tested.
+
+| Area | Proof of concept | Production design |
+|---|---|---|
+| Status | Deployed and tested from a Mac, and since removed. Excel on Windows 11 was not tested. | Not built. |
+| Sign-in to the share | Everyone uses one shared guest password. | Each user signs in with their own account, through Microsoft Entra Domain Services. |
+| Folder permissions | Everyone can read and change every file. | Windows folder permissions are granted to Microsoft Entra ID groups. |
+| Sign-in to the VPN | Everyone uses one shared client certificate. | Each user signs in with Microsoft Entra ID, so disabling an account removes its access. |
+| How users connect | All users connect through AWS Client VPN. | Remote users connect through AWS Client VPN. The office connects through AWS Site-to-Site VPN or AWS Direct Connect. |
+| Exposure to the internet | The gateway has a public IP address, and its file-sharing port is open only to the listed addresses. | The gateway has no public IP address, and its network has no internet gateway. |
+| Path from the gateway to S3 | Encrypted traffic crosses the internet. | Traffic stays inside AWS, through VPC endpoints. |
+| Encryption keys | AWS manages the keys. | A customer managed AWS KMS key encrypts the bucket and the disks. |
+| Gateway size | An m5.xlarge instance with a 300 GiB cache. | An m5.2xlarge or larger instance with a cache of 1 TiB or more. |
+| Logging and alarms | Both are off. | Connections, network traffic, file access and gateway health are logged, and CloudWatch alarms are set. |
+| Monthly AWS cost | About $277 in fixed charges. Charges that depend on use are extra. | About $615 to $655 for 10 users, including typical use. Microsoft's charges for Entra Domain Services and the Azure VPN gateway are extra. |
+
+[![Recommended production design. Office and remote users reach an S3 File Gateway in a private subnet. The gateway joins a Microsoft Entra Domain Services domain and reaches S3 through VPC endpoints.](docs/diagrams/architecture-production.svg)](docs/production.md)
+
+Compare this diagram with the proof-of-concept diagram at the top of the page. The [production design page](docs/production.md) lists the steps to build it, the [security page](docs/security.md) explains each weakness it fixes, and the [costs page](docs/costs.md) itemizes both totals.
 
 ## Quick start
 

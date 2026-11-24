@@ -1,8 +1,14 @@
 # Changelog
 
-_DRAFT - For internal use only. Last modified: 2026-11-23 11:37 EST by mbitar._
+_DRAFT - For internal use only. Last modified: 2026-11-24 07:58 EST by mbitar._
 
 This file lists the notable changes to the repository, newest first.
+
+## 2026-11-24
+
+### Added
+
+- A README section that compares the proof of concept with the production design, with the production diagram.
 
 ## 2026-11-23
 
