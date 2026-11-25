@@ -1,8 +1,8 @@
 # curs3drive on a Windows 11 Production PC
 
-_DRAFT - For internal use only. Last modified: 2026-11-25 11:48 EST by mbitar._
+_DRAFT - For internal use only. Last modified: 2026-11-25 12:14 EST by mbitar._
 
-**curs3drive** is a proof of concept that makes an Amazon S3 bucket work like a Windows network drive, so people can open, edit and save large Cost and Usage Report (CUR) files. It uses **Amazon S3 File Gateway**, one type of AWS Storage Gateway, which runs on an EC2 instance and shares the bucket over SMB, the Windows file-sharing protocol. The PC connects with the AWS VPN Client and maps the share as drive S:. The gateway uploads every save to S3. It has been tested only from a Mac, and its AWS parts were removed on 23 November 2026.
+**curs3drive** ([scriptbuzz/curs3drive](https://github.com/scriptbuzz/curs3drive)) is a proof of concept that makes an Amazon S3 bucket work like a Windows network drive, so people can open, edit and save large Cost and Usage Report (CUR) files. It uses **Amazon S3 File Gateway**, one type of AWS Storage Gateway, which runs on an EC2 instance and shares the bucket over SMB, the Windows file-sharing protocol. The PC connects with the AWS VPN Client and maps the share as drive S:. The gateway uploads every save to S3. It has been tested only from a Mac, and its AWS parts were removed on 23 November 2026.
 
 This page answers two questions: can curs3drive run on a production Windows 11 PC, and what needs a Windows administrator password?
 
@@ -10,7 +10,7 @@ This page answers two questions: can curs3drive run on a production Windows 11 P
 
 ## Answer so far
 
-**Probably yes, if IT installs the AWS VPN Client.** This comes from the code and vendor documentation. Nothing has been tested on Windows.
+**Probably yes, if IT installs the AWS VPN Client.** This comes from the code and vendor documentation. Nothing has been run on Windows. The PC's policies and network decide, so run Check 1.
 
 - "Administrator" means a Windows administrator of the PC, not an AWS administrator.
 - Reported by the user, not checked: the user has no administrator password, and Python and the AWS CLI are installed.
@@ -37,6 +37,7 @@ This check reads settings and makes two short connections to a public AWS addres
 1. Disconnect the AWS VPN Client, if it is installed.
 2. Open **Windows PowerShell** as the normal user, not with **Run as administrator**.
 3. Paste the whole block and press Enter. It takes up to about a minute.
+4. Read the last line, check the table for anything private, and send it back. If PowerShell shows an error, send that too.
 
 ```powershell
 & {
@@ -57,7 +58,7 @@ $ProgressPreference = 'SilentlyContinue'
 # ------------------------------------------------------------
 # Row makes one line of the result table.
 #   Check  = what was checked
-#   Result = WORKS, ADMIN, ASK IT, TEST LATER or INFO
+#   Result = WORKS, WINDOWS ADMIN, ASK IT, TEST LATER or INFO
 #   Detail = a short explanation
 function Row($Check, $Result, $Detail) {
     1 | Select-Object @{n='Result';e={$Result}}, @{n='Check';e={$Check}}, @{n='Detail';e={$Detail}}
@@ -104,7 +105,7 @@ $rows = & {
     $build = [int](Reg $cv 'CurrentBuildNumber')
     $about = "$(Reg $cv 'EditionID') $(Reg $cv 'DisplayVersion'), build $build, $env:PROCESSOR_ARCHITECTURE"
     if ($build -ge 22000) { Row 'Windows 11' 'WORKS' $about }
-    else { Row 'Windows 11' 'ADMIN' "Not Windows 11: $about" }
+    else { Row 'Windows 11' 'WINDOWS ADMIN' "Not Windows 11: $about" }
     # USER
     # Checks whether the user belongs to the local Administrators group.
     # S-1-5-32-544 is the fixed ID of that group in every language of Windows.
@@ -114,11 +115,11 @@ $rows = & {
     else { Row 'User' 'INFO' 'Standard user.' }
     # ----- AWS VPN Client -----
     # Looks for the folder where the client is installed.
-    # If it is missing, a standard user gets ADMIN, because the installer adds a Windows service.
+    # If it is missing, a standard user gets WINDOWS ADMIN, because the installer adds a Windows service.
     Step 2 'AWS VPN Client and .NET Framework'
     if (Test-Path "$env:ProgramFiles\Amazon\AWS VPN Client") { Row 'AWS VPN Client' 'WORKS' 'Already installed.' }
     elseif ($isAdmin) { Row 'AWS VPN Client' 'WORKS' 'Not installed. This user should be able to install it.' }
-    else { Row 'AWS VPN Client' 'ADMIN' 'Not installed.' }
+    else { Row 'AWS VPN Client' 'WINDOWS ADMIN' 'Not installed.' }
     # NET FRAMEWORK
     # The client needs version 4.7.2 (release number 461808) on x64 processors,
     # and version 4.8.1 (release number 533320) on Arm64 processors.
@@ -126,15 +127,33 @@ $rows = & {
     if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { $need = 533320 }
     $release = [int](Reg 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full' 'Release')
     if ($release -ge $need) { Row '.NET Framework' 'WORKS' "Release $release, needs $need." }
-    else { Row '.NET Framework' 'ADMIN' "Release $release, needs $need." }
+    else { Row '.NET Framework' 'WINDOWS ADMIN' "Release $release, needs $need." }
     # ----- Programs and scripts -----
     # APPLICATION CONTROL
     # PowerShell runs in a restricted mode when tools such as AppLocker or App Control for Business are enforced.
     # A restricted mode is a sign that the company may block the AWS VPN Client too.
     Step 3 'Programs and scripts'
+    # AppLocker and App Control decide which programs may run. A rule group of AppLocker is enforced
+    # if it is Enabled, or if it has rules and no mode is set.
+    # A rule that cannot be read counts as ASK IT, never as a pass.
+    $control = @()
+    $unknown = @()
     $mode = "$($ExecutionContext.SessionState.LanguageMode)"
-    if ($mode -eq 'FullLanguage') { Row 'Application control' 'INFO' 'PowerShell is not restricted. Other programs may be.' }
-    else { Row 'Application control' 'ASK IT' "PowerShell is restricted ($mode), so other programs may be blocked too." }
+    if ($mode -ne 'FullLanguage') { $control += "PowerShell is restricted ($mode)" }
+    try {
+        [xml]$al = Get-AppLockerPolicy -Effective -Xml -ErrorAction Stop
+        foreach ($c in @($al.AppLockerPolicy.RuleCollection)) {
+            $on = ($c.EnforcementMode -eq 'Enabled') -or (($c.EnforcementMode -eq 'NotConfigured') -and ($c.ChildNodes.Count -gt 0))
+            if ($on -and ($c.Type -eq 'Exe' -or $c.Type -eq 'Dll')) { $control += "AppLocker $($c.Type) rules are enforced" }
+        }
+    } catch { $unknown += 'AppLocker' }
+    try {
+        $dg = Get-CimInstance -Namespace root\Microsoft\Windows\DeviceGuard -ClassName Win32_DeviceGuard -ErrorAction Stop
+        if ($dg.UsermodeCodeIntegrityPolicyEnforcementStatus -eq 2) { $control += 'App Control is enforced' }
+    } catch { $unknown += 'App Control' }
+    if ($control.Count) { Row 'Application control' 'ASK IT' "$($control -join '; '). Is the AWS VPN Client allowed?" }
+    elseif ($unknown.Count) { Row 'Application control' 'ASK IT' "This could not be read: $($unknown -join ', ')." }
+    else { Row 'Application control' 'WORKS' 'No enforced AppLocker program rules or App Control were found.' }
     # POWERSHELL SCRIPT
     # Reads whether script files may run. The share does not need the script, so this is only INFO.
     # This rule is about files, so it does not apply to a pasted block.
@@ -147,7 +166,7 @@ $rows = & {
     Step 4 'File sharing, signing and sign-in rules'
     $service = Get-Service LanmanWorkstation -ErrorAction SilentlyContinue
     if ("$($service.Status)" -eq 'Running') { Row 'File sharing' 'WORKS' 'The Workstation service is running.' }
-    else { Row 'File sharing' 'ADMIN' 'The Workstation service is not running.' }
+    else { Row 'File sharing' 'WINDOWS ADMIN' 'The Workstation service is not running.' }
     # SMB SIGNING
     # Reads whether Windows requires every file-sharing connection to be signed.
     # Signing does not allow guest access, so a required value has to be proved with Check 2.
@@ -163,7 +182,7 @@ $rows = & {
     # BlockNTLM is the same kind of rule for file sharing only.
     # An administrator can add an exception for the gateway.
     $lsa = 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa'
-    if (((Reg "$lsa\MSV1_0" 'RestrictSendingNTLMTraffic') -eq 2) -or ($smb -and $smb.BlockNTLM)) { Row 'NTLM sign-in' 'ADMIN' 'Blocked. IT has to allow the gateway.' }
+    if (((Reg "$lsa\MSV1_0" 'RestrictSendingNTLMTraffic') -eq 2) -or ($smb -and $smb.BlockNTLM)) { Row 'NTLM sign-in' 'WINDOWS ADMIN' 'Blocked. IT has to allow the gateway.' }
     else { Row 'NTLM sign-in' 'TEST LATER' 'No block found.' }
     # DRIVE LETTER
     # Any free letter works, so a taken letter is only INFO.
@@ -177,7 +196,7 @@ $rows = & {
     Step 5 'Windows Firewall'
     try {
         $blocked = Get-NetFirewallProfile -PolicyStore ActiveStore -ErrorAction Stop | Where-Object { "$($_.Enabled)" -eq 'True' -and "$($_.DefaultOutboundAction)" -eq 'Block' }
-        if ($blocked) { Row 'Windows Firewall' 'ADMIN' "Blocks outgoing traffic by default: $($blocked.Name -join ', ')." }
+        if ($blocked) { Row 'Windows Firewall' 'WINDOWS ADMIN' "Blocks outgoing traffic by default: $($blocked.Name -join ', ')." }
         else { Row 'Windows Firewall' 'TEST LATER' 'Does not block outgoing traffic by default. Single rules are not checked.' }
     } catch { Row 'Windows Firewall' 'ASK IT' 'Windows did not show this setting.' }
     # TCP 443 TO AWS
@@ -218,19 +237,27 @@ $rows = & {
     else { Row 'Address ranges' 'WORKS' 'No overlap.' }
 }
 # ------------------------------------------------------------
-# Show the table. Lines that need an administrator come first, and background information comes last.
+# The answer for drive S:. The most serious result above decides it.
+# ------------------------------------------------------------
+$admin = @($rows | Where-Object { $_.Result -eq 'WINDOWS ADMIN' } | ForEach-Object { $_.Check })
+$ask = @($rows | Where-Object { $_.Result -eq 'ASK IT' } | ForEach-Object { $_.Check })
+$answer = if ($admin.Count) { Row '==> Drive S:' 'WINDOWS ADMIN' "An administrator must act on: $($admin -join ', ')." }
+elseif ($ask.Count) { Row '==> Drive S:' 'ASK IT' "IT must answer about: $($ask -join ', ')." }
+else { Row '==> Drive S:' 'TEST LATER' 'No blocker was found. Check 2 proves it.' }
+# ------------------------------------------------------------
+# Show the table. Lines that need an administrator come first, and the answer (==>) comes last.
 # Nothing is saved to a file.
 # ------------------------------------------------------------
 Write-Host 'Done. The results are below.'
-$rows | Sort-Object { @{ 'ADMIN' = 0; 'ASK IT' = 1; 'TEST LATER' = 2; 'WORKS' = 3; 'INFO' = 4 }[$_.Result] } | Format-Table Result, Check, Detail -AutoSize -Wrap | Out-String -Width 120
+@($rows) + @($answer) | Sort-Object { if ($_.Check -like '==>*') { 9 } else { @{ 'WINDOWS ADMIN' = 0; 'ASK IT' = 1; 'TEST LATER' = 2; 'WORKS' = 3; 'INFO' = 4 }[$_.Result] } }, { $_.Check } | Format-Table Result, Check, Detail -AutoSize -Wrap | Out-String -Width 120
 }
 ```
 
 | Result | Meaning |
 |---|---|
 | `WORKS` | No problem was found. |
-| `ADMIN` | A Windows administrator must install or change it. |
-| `ASK IT` | IT or the network team must answer. |
+| `WINDOWS ADMIN` | A Windows administrator must install or change it. |
+| `ASK IT` | A company rule may block it, or the check could not tell. IT or the network team must answer. |
 | `TEST LATER` | No problem was found. Check 2 proves it. |
 | `INFO` | Background only. |
 
@@ -304,18 +331,63 @@ Use **sample files only**. The proof of concept is not secure enough for real da
 3. May the PC use TCP port 445 through that VPN, with NTLM sign-in?
 4. Does data loss prevention block saving to this share?
 
+## Who fixes what
+
+| Problem | Who fixes it |
+|---|---|
+| AWS VPN Client or .NET Framework is missing or too old | Windows administrator |
+| The Workstation service is not running | Windows administrator |
+| NTLM sign-in is blocked | Windows administrator |
+| The firewall blocks TCP port 443 or 445 | Windows administrator or network team |
+| AppLocker or App Control blocks the AWS VPN Client | IT or security team |
+| TLS inspection or another VPN stops the connection | Network team |
+| Data loss prevention blocks saving to the share | Security team |
+| The address ranges overlap | IT names free ranges, and the person who deployed the gateway sets them in Terraform |
+
+## What the user can change
+
+- **Drive letter taken:** use another free letter.
+- **Scripts blocked:** use `net use` instead of the script.
+- **VPN profile:** add or remove it in the AWS VPN Client.
+
+## Network addresses
+
+The PC makes only outgoing connections. It needs no inbound firewall rule.
+
+- **VPN:** TCP port 443 to the address in the `remote` line of the VPN profile
+- **Drive S:** TCP port 445 to the gateway's private address, through the VPN
+- **Check 1 only:** TCP port 443 to ec2.us-east-1.amazonaws.com
+- **Setup only:** aws.amazon.com, and the address that its download link uses
+
 ## Biggest unknown: guest sign-in
 
 Windows 11 24H2 Enterprise, Pro and Education [require SMB signing](https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-signing), which does not allow guest access. The share should still work, because `smbguest` has a password and the Mac's session was encrypted, which [Microsoft says guest logons do not support](https://learn.microsoft.com/en-us/windows-server/storage/file-server/enable-insecure-guest-logons-smb2-and-smb3). Check 2 tests this.
 
 If it fails, do not turn off signing or turn on insecure guest logons. Use each person's own account, as in the [production design](docs/production.md).
 
-## If IT does not install the client
+## If IT says no
 
 | Alternative | Needs | Limit |
 |---|---|---|
 | Site-to-Site VPN or Direct Connect | The network team and the [production design](docs/production.md), which is not built | None on the PC, if policy allows the share |
 | Download, edit and upload with the AWS CLI | An AWS sign-in with access to the bucket | Not a network drive. Users cannot save in place, and can overwrite each other. |
+
+## Real rollout by IT
+
+Do not roll out this proof of concept. The [production design](docs/production.md) describes the real setup, with each person's own account instead of the shared guest password.
+
+## Not confirmed
+
+- Nothing has been run on Windows, including these checks.
+- The checks cannot see single firewall rules, all security products or data loss prevention.
+- AWS does not say whether installing or updating the client needs a Windows administrator.
+
+## Sources
+
+- AWS VPN Client: https://docs.aws.amazon.com/vpn/latest/clientvpn-user/windows-troubleshooting.html and https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-endpoint-security.html
+- SMB signing: https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-signing
+- Guest sign-in: https://learn.microsoft.com/en-us/windows-server/storage/file-server/enable-insecure-guest-logons-smb2-and-smb3
+- AppLocker: https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/applocker/executable-rules-in-applocker
 
 ---
 

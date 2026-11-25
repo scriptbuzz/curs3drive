@@ -1,6 +1,6 @@
 # Changelog
 
-_DRAFT - For internal use only. Last modified: 2026-11-25 11:40 EST by mbitar._
+_DRAFT - For internal use only. Last modified: 2026-11-25 12:14 EST by mbitar._
 
 This file lists the notable changes to the repository, newest first.
 
@@ -13,6 +13,8 @@ This file lists the notable changes to the repository, newest first.
 ### Changed
 
 - The Windows guide now describes the profile menu of version 6 of the AWS VPN Client.
+- Check 1 on the production PC page now also checks AppLocker and App Control, and ends with one answer for drive S:. Its result word `ADMIN` is now `WINDOWS ADMIN`.
+- The production PC page now lists who fixes what, the network addresses and the sources.
 
 ## 2026-11-24
 
