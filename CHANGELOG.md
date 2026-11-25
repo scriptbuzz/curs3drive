@@ -1,8 +1,18 @@
 # Changelog
 
-_DRAFT - For internal use only. Last modified: 2026-11-24 08:02 EST by mbitar._
+_DRAFT - For internal use only. Last modified: 2026-11-25 11:40 EST by mbitar._
 
 This file lists the notable changes to the repository, newest first.
+
+## 2026-11-25
+
+### Added
+
+- A page that says what needs a Windows administrator on a production Windows 11 PC, with checks to paste into the PC.
+
+### Changed
+
+- The Windows guide now describes the profile menu of version 6 of the AWS VPN Client.
 
 ## 2026-11-24
 

@@ -1,6 +1,6 @@
 # Connect from Windows 11
 
-_DRAFT - For internal use only. Last modified: 2026-11-23 11:37 EST by mbitar._
+_DRAFT - For internal use only. Last modified: 2026-11-25 11:40 EST by mbitar._
 
 This guide maps the file share as drive S: on a Windows 11 laptop, so Excel can open and save the CUR workbooks.
 
@@ -11,7 +11,7 @@ This guide maps the file share as drive S: on a Windows 11 laptop, so Excel can 
 - The VPN profile file, `cur-file-gateway.ovpn`, from the person who deployed the gateway.
 - The gateway's private address, for example `10.40.0.217`, and its gateway ID, for example `sgw-C712B1AF`.
 - The share's guest password, handed over through a password manager.
-- Permission to install software on the laptop.
+- A Windows administrator, once, to install the AWS VPN Client. [Windows 11 production PC](../WINDOWS11_PROD_PC.md) lists what needs one, and has checks to run on the PC.
 
 ## Step 1: Install the AWS VPN Client
 
@@ -21,8 +21,8 @@ This guide maps the file share as drive S: on a Windows 11 laptop, so Excel can 
 ## Step 2: Add the VPN profile
 
 1. Open **AWS VPN Client** from the Start menu.
-2. Choose **File**, then **Manage Profiles**, then **Add Profile**.
-3. Type `CUR file share` as the display name, select the `.ovpn` file, and choose **Add Profile**.
+2. Choose **Add profile**. If other profiles exist, choose **Other actions**, **Profiles**, **Add**.
+3. Type `CUR file share` as the name, select the `.ovpn` file, and choose **Add profile**.
 
 ## Step 3: Connect the VPN
 

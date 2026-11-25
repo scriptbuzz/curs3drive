@@ -2,7 +2,7 @@
 
 # CUR Excel Files on an S3 Network Drive with Amazon S3 File Gateway
 
-_DRAFT - For internal use only. Last modified: 2026-11-24 08:02 EST by mbitar._
+_DRAFT - For internal use only. Last modified: 2026-11-25 11:40 EST by mbitar._
 
 **Excel users on Windows 11 and macOS open, edit and save Cost and Usage Report workbooks that are stored in Amazon S3, through an ordinary network drive. The AWS service that turns the S3 bucket into that network drive is Amazon S3 File Gateway, one type of AWS Storage Gateway.**
 
@@ -87,6 +87,7 @@ The [deployment guide](docs/deployment.md) has every step, including how to clos
 |---|---|
 | [Architecture](docs/architecture.md) | How opening and saving a file works, the design decisions, and the limits that remain. |
 | [Deployment guide](docs/deployment.md) | Deploying, handing out access, and removing the proof of concept. |
+| [Windows 11 production PC](WINDOWS11_PROD_PC.md) | Whether the proof of concept can run on a production Windows 11 PC, what needs a Windows administrator, and checks to paste into the PC. |
 | [Connect from Windows 11](docs/connect-windows.md) | Installing the VPN app, mapping drive S:, and tips for large workbooks. |
 | [Connect from macOS](docs/connect-macos.md) | Opening the share in Finder, and saving from Excel and the Mac Numbers spreadsheet app. |
 | [Security](docs/security.md) | The protections in place, the weaknesses accepted for the proof of concept, and where each secret lives. |
@@ -121,6 +122,7 @@ The [deployment guide](docs/deployment.md) has every step, including how to clos
 ├── LICENSE                         Proprietary license from FPT, the solution owner
 ├── DISCLAIMER.md                   Disclaimers that form part of the license
 ├── NOTICE.md                       Third-party material and its terms
+├── WINDOWS11_PROD_PC.md            What a production Windows 11 PC needs, with checks
 ├── docs/                           Guides, explanations and results
 │   ├── demo/                       Animated demo and the recording it is built from
 │   ├── diagrams/                   Finished diagrams in SVG and PNG
